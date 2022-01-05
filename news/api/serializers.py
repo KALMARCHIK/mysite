@@ -1,9 +1,24 @@
 from rest_framework import serializers
 
-from news.models import Post, Rubric
+from news.models import Post, Rubric, Comment
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
+class PostCommentSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'text', 'rubric', 'created_at', 'user', 'comments']
 
 
 class PostSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Post
         fields = '__all__'

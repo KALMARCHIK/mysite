@@ -38,7 +38,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Пост')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Пост',related_name='comments')
     author = models.CharField(max_length=30, verbose_name='Автор')
     content = models.TextField(verbose_name='Содержание')
     is_active = models.BooleanField(default=True, db_index=True, verbose_name='Выводить на экран?')

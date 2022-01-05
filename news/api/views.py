@@ -3,9 +3,9 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, RetrieveDestroyAPIView, CreateAPIView, \
     RetrieveAPIView
 
-
-from news.api.serializers import PostSerializer, RubricSerializer, RubricPostSerializer
-from news.models import Post, Rubric
+from news.api.serializers import PostSerializer, RubricSerializer, RubricPostSerializer, CommentSerializer, \
+    PostCommentSerializer
+from news.models import Post, Rubric, Comment
 
 
 class PostsListApiView(ListAPIView):
@@ -20,6 +20,11 @@ class PostsListApiView(ListAPIView):
 class PostCreateApiView(CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+
+class PostDetailView(RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostCommentSerializer
 
 
 class PostDeleteApiView(RetrieveDestroyAPIView):
@@ -50,3 +55,8 @@ class RubricCreateApiView(CreateAPIView):
 class RubricDeleteApiView(RetrieveDestroyAPIView):
     queryset = Rubric.objects.all()
     serializer_class = RubricSerializer
+
+
+class CommentApiView(ListAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer

@@ -25,7 +25,7 @@ urlpatterns = [
     path('shop/', include('shop.urls')),
     path('captcha/', include('captcha.urls')),
     path('admin/', admin.site.urls),
-    path('api/', include('news.api.urls')),
+    path('api/news/', include('news.api.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
