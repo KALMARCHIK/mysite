@@ -4,7 +4,7 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, Retrieve
     RetrieveAPIView
 
 from news.api.serializers import PostSerializer, RubricSerializer, RubricPostSerializer, CommentSerializer, \
-    PostCommentSerializer
+    PostRelationsSerializer
 from news.models import Post, Rubric, Comment
 
 
@@ -23,8 +23,20 @@ class PostCreateApiView(CreateAPIView):
 
 
 class PostDetailView(RetrieveAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostCommentSerializer
+    def get_object(self):
+        self.post = Post.objects.get(id=self.kwargs.get('pk'))
+        likes = 0
+        for like in self.post.likes.all():
+            if like.like:
+                likes += 1
+            else:
+                pass
+        self.likes = likes
+        return self.post
+
+    def get_serializer_class(self):
+        serializer = PostRelationsSerializer
+        return serializer
 
 
 class PostDeleteApiView(RetrieveDestroyAPIView):
