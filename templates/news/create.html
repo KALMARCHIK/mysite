@@ -1,0 +1,11 @@
+{% extends 'news/base.html' %}
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+     {{ form.as_p }}
+    <button type="submit" class="btn btn-warning">Добавить</button>
+</form>
+{% if post %}
+<input type="submit" value="Удалить">
+{% endif %}
+{% endblock %}

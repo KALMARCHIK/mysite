@@ -1,0 +1,10 @@
+{% extends 'news/base.html' %}
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+     {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Добавить</button>
+    <a href="{% url 'post_delete' post.id%}">Удалить</a>
+</form>
+
+{% endblock %}

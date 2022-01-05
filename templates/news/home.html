@@ -1,0 +1,26 @@
+{%extends 'news/base.html'%}
+{% block rubric_all %}
+{% for rubric in rubrics %}
+<a href="{% url 'rubric' rubric.id %}">{{rubric.name}}</a><br>
+{% endfor %}
+{% endblock %}
+
+{%block content%}
+
+<h2>Последние 10 постов</h2>
+{% for post in posts %}
+<div class="card">
+  <div class="card-header">
+    {{post.created_at}}
+  </div>
+    <div class="card-header">
+        Категория : <a href="{% url 'rubric_post' post.rubric.id%}">{{post.rubric}}</a>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{post.title}}</h5>
+    <p class="card-text">{{post.text}}</p>
+    <a href="{% url 'post_full' post.id%}" class="btn btn-primary">Читать далее</a>
+  </div>
+</div><br>
+{%endfor%}
+{%endblock%}

@@ -1,0 +1,11 @@
+.footer_class{
+text-align:center;
+outline: 2px solid #000;
+height: 100px;
+}
+.rubric_class{
+ word-spacing: 20px;
+border-bottom-width:10px;
+border-bottom-color: white;
+border-bottom-style: solid;
+}
