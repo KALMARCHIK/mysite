@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from news.models import Post, Rubric, Comment, Like
+from news.models import Post, Rubric, Comment, Like, Rating
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -18,10 +18,11 @@ class LikeSerializer(serializers.ModelSerializer):
 class PostRelationsSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     likes = serializers.SerializerMethodField(method_name='get_count_likes')
+    ratings = serializers.SerializerMethodField(method_name='get_ratings')
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'text', 'rubric', 'created_at', 'user', 'likes', 'comments']
+        fields = ['id', 'title', 'text', 'rubric', 'created_at', 'user', 'likes', 'ratings', 'comments']
 
     def get_count_likes(self, post):
         likes = 0
@@ -31,6 +32,13 @@ class PostRelationsSerializer(serializers.ModelSerializer):
             else:
                 pass
         return likes
+
+    def get_ratings(self, post):
+        ratings = 0
+        for rating in post.ratings.all():
+            ratings += rating.rating
+        ratings = ratings / len(post.ratings.all())
+        return ratings
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -51,3 +59,13 @@ class RubricPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rubric
         fields = ['id', 'name', 'posts']
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ('rating', 'user', 'post')
+
+    def update(self, instance, validated_data):
+        instance.rating = validated_data.get('rating', instance.rating)
+        return instance

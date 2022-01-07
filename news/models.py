@@ -63,7 +63,7 @@ class AdvUser(AbstractUser):
 
 class Rating(models.Model):
     rating = models.IntegerField(blank=True, null=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='rating')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(AdvUser, on_delete=models.CASCADE, blank=True, null=True, related_name='ratings')
 
     def __str__(self):

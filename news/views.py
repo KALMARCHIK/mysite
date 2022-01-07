@@ -219,10 +219,10 @@ class PostDetailView(DetailView):
             user_rating = 'Вы не оставляли сво рейтинг'
         ratings = 0
         likes = 0
-        if post.rating.all():
-            for rating in post.rating.all():
+        if post.ratings.all():
+            for rating in post.ratings.all():
                 ratings += int(rating.rating)
-            ratings = round(ratings / len(post.rating.all()), 2)
+            ratings = round(ratings / len(post.ratings.all()), 2)
 
         else:
             ratings = 'Никто не оставлял своей оценки.Будьте первыми'

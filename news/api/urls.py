@@ -1,7 +1,8 @@
 from django.urls import path
 
 from news.api.views import PostsListApiView, PostDeleteApiView, PostUpdateApiView, PostCreateApiView, RubricListApiView, \
-    RubricPostApiView, RubricCreateApiView, RubricDeleteApiView, CommentApiView, PostDetailView
+    RubricPostApiView, RubricCreateApiView, RubricDeleteApiView, CommentApiView, PostDetailView, AddCommentApiView, \
+    RatingApiView
 
 urlpatterns = [
     path('posts/', PostsListApiView.as_view(), name='posts'),
@@ -14,4 +15,6 @@ urlpatterns = [
     path('rubric_create',RubricCreateApiView.as_view()),
     path('rubric_delete/<int:pk>',RubricDeleteApiView.as_view()),
     path('comment/',CommentApiView.as_view()),
+    path('add_comment/',AddCommentApiView.as_view()),
+    path('do_rating/<int:post_pk>',RatingApiView.as_view()),
 ]

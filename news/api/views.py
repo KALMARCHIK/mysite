@@ -1,11 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, RetrieveDestroyAPIView, CreateAPIView, \
     RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
+from rest_framework.views import APIView
 
 from news.api.serializers import PostSerializer, RubricSerializer, RubricPostSerializer, CommentSerializer, \
-    PostRelationsSerializer
-from news.models import Post, Rubric, Comment
+    PostRelationsSerializer, RatingSerializer
+from news.models import Post, Rubric, Comment, Rating
 
 
 class PostsListApiView(ListAPIView):
@@ -22,21 +27,52 @@ class PostCreateApiView(CreateAPIView):
     serializer_class = PostSerializer
 
 
-class PostDetailView(RetrieveAPIView):
-    def get_object(self):
-        self.post = Post.objects.get(id=self.kwargs.get('pk'))
-        likes = 0
-        for like in self.post.likes.all():
-            if like.like:
-                likes += 1
-            else:
-                pass
-        self.likes = likes
-        return self.post
+class PostDetailView(APIView):
+    def get(self, request, *args, **kwargs):
+        serializer = PostRelationsSerializer(Post.objects.get(pk=kwargs.get('pk')))
+        return Response(serializer.data, status=HTTP_200_OK)
 
-    def get_serializer_class(self):
-        serializer = PostRelationsSerializer
-        return serializer
+
+class AddCommentApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        comment = Comment.objects.all()
+        serializer = CommentSerializer(comment, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RatingApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, **kwargs):
+        print(kwargs.get('post_pk'))
+        data = {
+            'rating': request.data['rating'],
+            'post': int(kwargs.get('post_pk')),
+            'user': request.user.id
+        }
+        serializer = RatingSerializer(data=data)
+
+        if not Rating.objects.filter(post=data['post'], user=data['user']):
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            if serializer.is_valid():
+                rating = Rating.objects.get(post=data['post'], user=data['user'])
+                rating.rating = data['rating']
+                rating.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PostDeleteApiView(RetrieveDestroyAPIView):
