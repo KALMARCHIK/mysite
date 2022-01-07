@@ -5,12 +5,11 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, Retrieve
     RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 
 from news.api.serializers import PostSerializer, RubricSerializer, RubricPostSerializer, CommentSerializer, \
-    PostRelationsSerializer, RatingSerializer
-from news.models import Post, Rubric, Comment, Rating
+    PostRelationsSerializer, RatingSerializer, LikeSerializer
+from news.models import Post, Rubric, Comment, Rating, Like
 
 
 class PostsListApiView(ListAPIView):
@@ -108,3 +107,26 @@ class RubricDeleteApiView(RetrieveDestroyAPIView):
 class CommentApiView(ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+
+class LikePostApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, **kwargs):
+        data = {
+            'like': request.data['like'],
+            'user': request.user.id,
+            'post': kwargs.get('post_pk')
+        }
+        serializer = LikeSerializer(data=data)
+        if not Like.objects.filter(post=data['post'], user=data['user']):
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            if serializer.is_valid():
+                like = Like.objects.get(post=data['post'], user=data['user'])
+                like.like = data['like']
+                like.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
