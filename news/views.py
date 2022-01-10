@@ -91,6 +91,7 @@ class PostView(ListView):
     queryset = Post.objects.annotate(like_count=Count('likes')).order_by('-like_count')
     template_name = 'news/home.html'
     context_object_name = 'posts'
+    paginate_by = 4
 
 
 class AboutView(TemplateView):
@@ -268,6 +269,7 @@ class RubricView(ListView):
     model = Post
     template_name = 'news/rubric_posts.html'
     context_object_name = 'posts'
+    paginate_by = 4
 
     def get_queryset(self):
         return Post.objects.filter(rubric__id=self.kwargs['rubric_id'])
