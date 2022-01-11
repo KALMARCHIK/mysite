@@ -92,7 +92,7 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('content',)
-        widget = {'author':forms.HiddenInput}
+        widget = {'author': forms.HiddenInput}
 
 
 class ProstoForm(forms.Form):
@@ -106,7 +106,7 @@ class ProstoForm(forms.Form):
     }))
 
 
-ProstoFormSet = formset_factory(ProstoForm,extra=2)
+ProstoFormSet = formset_factory(ProstoForm, extra=2)
 
 
 class RatingForm(forms.ModelForm):

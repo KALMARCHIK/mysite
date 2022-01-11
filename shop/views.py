@@ -22,6 +22,7 @@ class CreateItem(CreateView):
     template_name = 'shop/create_item.html'
     form_class = ItemForm
     success_url = reverse_lazy('shop:home')
+
     def get_form(self):
         form = super().get_form()
         return form
