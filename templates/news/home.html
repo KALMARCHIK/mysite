@@ -26,13 +26,15 @@
 {% if page_obj %}
 <nav aria-label="...">
   <ul class="pagination">
-    {% if page_obj.has_previous %}
+    {% if page_obj.number > 2 %}
     <li class="page-item">
       <a class="page-link" href="?page=1">1</a>
     </li>
     <li>
     <a class="page-link">...</a>
     </li>
+    {%endif%}
+    {% if page_obj.has_previous %}
     <li class="page-item">
       <a class="page-link" href="?page={{page_obj.previous_page_number}}">{{page_obj.previous_page_number}}</a>
     </li>

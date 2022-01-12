@@ -46,7 +46,21 @@ class RegisterUserForm(UserCreationForm):
             }
         )
     )
-
+    def clean(self):
+        cleaned_data = super(RegisterUserForm,self).clean()
+        email = cleaned_data['email']
+        username = cleaned_data['username']
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+        errors = {}
+        if AdvUser.objects.filter(email=email).exists():
+            errors['email'] = ValidationError('Email уже занят')
+        if AdvUser.objects.filter(username=username).exists():
+            errors['username'] = ValidationError('Username уже занят')
+        if password1 != password2:
+            errors['password1'] = ValidationError('Пароли не совпадают')
+        if errors:
+            raise ValidationError(errors)
     class Meta:
         model = AdvUser
         fields = (
@@ -81,6 +95,18 @@ class RegisterUserForm(UserCreationForm):
                 attrs={
                     "class": "form-control form-control-user",
                     "placeholder": "Last name",
+                }
+            ),
+            "password1": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-user",
+                    "placeholder": "Password",
+                }
+            ),
+            "password2": forms.TextInput(
+                attrs={
+                    "class": "form-control form-control-user",
+                    "placeholder": "Repeat password",
                 }
             ),
         }

@@ -6,6 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Count
 from django.views.generic.base import View
 from .forms import *
+from .mixins import PostChangeMixin
 
 from .models import *
 from django.contrib.auth.views import LogoutView, LoginView, PasswordChangeView
@@ -39,12 +40,12 @@ class RegisterUser(CreateView):
     success_url = reverse_lazy("login")
     template_name = "news/register.html"
 
-    def form_valid(self, form):
-        messages.info(
-            self.request,
-            "Predictions will be inaccurate until you update your settings",
-        )
+    def get_form(self):
+        form = super().get_form()
+        return form
 
+    def form_valid(self, form):
+        form.save()
         return super().form_valid(form)
 
 
@@ -121,7 +122,7 @@ class ProstoView(View):
             return redirect('ass1')
 
 
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin,CreateView):
     form_class = PostForm
     template_name = 'news/create.html'
 
@@ -253,7 +254,7 @@ class AddReview(View):
         return redirect(post.get_absolute_url())
 
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(PostChangeMixin,UpdateView):
     model = Post
     template_name = 'news/post_change.html'
     fields = ['title', 'text', 'rubric']
