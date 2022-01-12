@@ -29,7 +29,7 @@ class PostCreateApiView(CreateAPIView):
 class PostDetailView(APIView):
     def get(self, request, *args, **kwargs):
         serializer = PostRelationsSerializer(Post.objects.get(pk=kwargs.get('pk')))
-        return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.data)
 
 
 class AddCommentApiView(APIView):
