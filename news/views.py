@@ -166,7 +166,7 @@ class DeleteUserView(LoginRequiredMixin, DeleteView):
         return get_object_or_404(queryset, pk=self.user_id)
 
 
-class AddRating(View):
+class AddRating(LoginRequiredMixin,View):
     def post(self, request, pk):
         form = RatingForm(request.POST)
         post = Post.objects.get(id=pk)
@@ -215,10 +215,13 @@ class PostDetailView(DetailView):
 
         context = super().get_context_data()
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-        if Rating.objects.filter(post=post, user=self.request.user):
-            user_rating = Rating.objects.get(post=post, user=self.request.user).rating
+        if self.request.user.is_authenticated:
+            if Rating.objects.filter(post=post, user=self.request.user):
+                user_rating = Rating.objects.get(post=post, user=self.request.user).rating
+            else:
+                user_rating = 'Вы не оставляли свой рейтинг'
         else:
-            user_rating = 'Вы не оставляли сво рейтинг'
+            user_rating = 'Вы не оставляли свой рейтинг'
         ratings = 0
         likes = 0
         if post.ratings.all():
@@ -230,17 +233,18 @@ class PostDetailView(DetailView):
             ratings = 'Никто не оставлял своей оценки.Будьте первыми'
         if post.likes.all():
             likes = len(post.likes.filter(like=True))
-        if Like.objects.filter(post=post, user=self.request.user):
-            user_like = Like.objects.get(post=post, user=self.request.user)
+        if self.request.user.is_authenticated:
+            if Like.objects.filter(post=post, user=self.request.user):
+                user_like = Like.objects.get(post=post, user=self.request.user)
 
-            context['user_like'] = user_like
+                context['user_like'] = user_like
         context['ratings'] = ratings
         context['likes'] = likes
         context['user_rating'] = user_rating
         return context
 
 
-class AddReview(View):
+class AddReview(LoginRequiredMixin,View):
     """Отзывы"""
 
     def post(self, request, pk):

@@ -5,7 +5,8 @@ from news.models import Post
 
 
 class PostChangeMixin(AccessMixin):
-    login_url = reverse_lazy('home')
+    login_url = reverse_lazy('login')
+    permission_denied_message = 'Это не твоё'
 
     def dispatch(self, request, *args, **kwargs):
         post_pk = kwargs.get('pk')

@@ -75,7 +75,7 @@
   </div>
 </div>
 <li>
-
+{% if user.is_authenticated %}
 <div class="row">
             <div class="single-form-left">
                 <!-- contact form grid -->
@@ -110,6 +110,9 @@
                 <!--  //contact form grid ends here -->
             </div>
         </div>
+    {%else%}
+    <div><a href="{% url 'login' %}"><button class="btn btn-dark">Войдите, чтобы оставить комментарий</button></a></div>
+{%endif%}
 {% if post.get_review %}
 <div class="mt-5">
 {% for comment in post.get_review %}
